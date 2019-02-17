@@ -34,20 +34,27 @@ import net.runelite.api.Point;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
+import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.ui.overlay.components.PanelComponent;
 import net.runelite.client.ui.overlay.components.ProgressPieComponent;
+import net.runelite.client.ui.overlay.components.TitleComponent;
 
 class TearsOfGuthixOverlay extends Overlay
 {
 	private static final Color CYAN_ALPHA = new Color(Color.CYAN.getRed(), Color.CYAN.getGreen(), Color.CYAN.getBlue(), 100);
 	private static final Duration MAX_TIME = Duration.ofSeconds(9);
 	private final TearsOfGuthixPlugin plugin;
+	private final TearsOfGuthixConfig config;
+	private final PanelComponent panelComponent = new PanelComponent();
+
 
 	@Inject
-	private TearsOfGuthixOverlay(TearsOfGuthixPlugin plugin)
+	private TearsOfGuthixOverlay(TearsOfGuthixPlugin plugin, TearsOfGuthixConfig config)
 	{
 		this.plugin = plugin;
 		setPosition(OverlayPosition.DYNAMIC);
 		setLayer(OverlayLayer.ABOVE_SCENE);
+		this.config = config;
 	}
 
 	@Override
@@ -76,6 +83,29 @@ class TearsOfGuthixOverlay extends Overlay
 			progressPie.render(graphics);
 		});
 
-		return null;
+		if(config.showNextSkill())
+		{
+			panelComponent.getChildren().clear();
+			String overlayTitle = "Skill to get XP:";
+
+			// Build overlay title
+			panelComponent.getChildren().add(TitleComponent.builder()
+					.text(overlayTitle)
+					.color(Color.GREEN)
+					.build());
+
+			// Set the size of the overlay (width)
+			panelComponent.setPreferredSize(new Dimension(
+					graphics.getFontMetrics().stringWidth(overlayTitle) + 30,
+					0));
+
+			// Add a line on the overlay for world number
+			panelComponent.getChildren().add(LineComponent.builder()
+					.left("Skill:")
+					.right(plugin.getNextSkill().getName())
+					.build());
+		}
+
+		return panelComponent.render(graphics);
 	}
 }
