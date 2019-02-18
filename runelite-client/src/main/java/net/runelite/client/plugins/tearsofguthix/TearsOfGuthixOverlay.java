@@ -83,9 +83,10 @@ class TearsOfGuthixOverlay extends Overlay
 			progressPie.render(graphics);
 		});
 
+		panelComponent.getChildren().clear();
+		//panelComponent.setPreferredLocation();
 		if(config.showNextSkill())
 		{
-			panelComponent.getChildren().clear();
 			String overlayTitle = "Skill to get XP:";
 
 			// Build overlay title
